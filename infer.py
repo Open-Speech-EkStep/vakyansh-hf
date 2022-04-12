@@ -62,5 +62,9 @@ class Wav2vecHF:
             with open(audio_dir + '/' + filename, mode='w+', encoding='utf-8') as ofile:
                 ofile.write(text)
 
-print(Wav2vecHF('Harveenchadha/hindi_model_with_lm_vakyansh', 'kenlm').transcribe('/home/harveen/blindtest_442338.wav',  return_timestamps = True))
-
+if __name__ == '__main__':
+    #print(Wav2vecHF('Harveenchadha/hindi_model_with_lm_vakyansh', 'kenlm').transcribe('/home/harveen/blindtest_442338.wav',  return_timestamps = True))
+    model_1m = Wav2vecHF('/home/anirudh/ekstep-speech-recognition/vakyansh-wav2vec2-experimentation/checkpoints/hf', 'kenlm')
+    model_v = Wav2vecHF('/home/anirudh/ekstep-speech-recognition/vakyansh-wav2vec2-experimentation/checkpoints/hf', 'viterbi')
+    print(model_1m.transcribe('/home/anirudh/test.wav', return_timestamps = True))
+    print(model_v.transcribe('/home/anirudh/test.wav', return_timestamps = True))
