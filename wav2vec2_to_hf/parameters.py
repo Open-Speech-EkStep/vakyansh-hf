@@ -1,0 +1,7 @@
+HF_CONFIG = 'hf_config.json'
+FINETUNED_CHECKPOINT = 'hindi_fairseq/him_4200.pt'
+PRETRAINED_CHECKPOINT = 'hindi_fairseq/CLSRIL-23.pt'
+DICT = 'hindi_fairseq/dict.ltr.txt'
+LM = 'hindi_fairseq/lm.binary'
+LEXICON = 'hindi_fairseq/lexicon.lst'
+HF_DIRECTORY_PATH = 'hindi_hf'
