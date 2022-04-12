@@ -24,23 +24,22 @@ class Wav2vecHF:
 
         return processor, model.to(self.device)
 
-    def transcribe(self, wav_path):
+    def transcribe(self, wav_path):                
+        
         audio_input, sample_rate = sf.read(wav_path)
 
         inputs = self.processor(audio_input, sampling_rate=16_000, return_tensors="pt", padding=True)
-
+        
+        with torch.no_grad():
+            logits = self.model(**inputs.to(self.device)).logits
+        
         if self.lm == 'viterbi':
-            with torch.no_grad():
-                logits = self.model(inputs.input_values.to(self.device)).logits
-            
-            pred_ids = torch.argmax(logits, dim=-1)
-            text = self.processor.batch_decode(pred_ids, skip_special_tokens=True)
+            text = self.processor.batch_decode(torch.argmax(logits, dim=-1), skip_special_tokens=True)
         elif self.lm == 'kenlm':
-            with torch.no_grad():
-                logits = self.model(**inputs.to(self.device)).logits
             result = self.processor.batch_decode(logits.cpu().numpy())
             text = result.text
-        return text[0]
+        
+        return text
 
     def transcribe_dir(self, audio_dir):
         wav_files = glob.glob(audio_dir + '/*.wav')
@@ -49,7 +48,3 @@ class Wav2vecHF:
             filename = wav_file.split('/')[-1].replace('.wav', '.txt')
             with open(audio_dir + '/' + filename, mode='w+', encoding='utf-8') as ofile:
                 ofile.write(text)
-
-
-if __name__ == '__main__':
-    print(Wav2vecHF('Harveenchadha/hindi_model_with_lm_vakyansh', 'kenlm').transcribe('/home/anirudh/test.wav'))
