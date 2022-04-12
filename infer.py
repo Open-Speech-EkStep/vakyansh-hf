@@ -32,8 +32,9 @@ class Wav2vecHF:
         if self.lm == 'viterbi':
             with torch.no_grad():
                 logits = self.model(inputs.input_values.to(self.device)).logits
+            
             pred_ids = torch.argmax(logits, dim=-1)
-            text = self.processor.decode(pred_ids)
+            text = self.processor.batch_decode(pred_ids, skip_special_tokens=True)
         elif self.lm == 'kenlm':
             with torch.no_grad():
                 logits = self.model(**inputs.to(self.device)).logits
