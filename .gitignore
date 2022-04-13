@@ -126,6 +126,7 @@ env.bak/
 venv.bak/
 hindi_fairseq/
 hindi_hf/
+notebooks/
 
 # Spyder project settings
 .spyderproject
