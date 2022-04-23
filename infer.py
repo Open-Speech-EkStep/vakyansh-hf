@@ -26,11 +26,7 @@ class Wav2vecHF:
 
     def transcribe(self, wav_path, hotwords=[], return_timestamps=False, mode='file'):
 
-        if mode == 'file':
-            audio_input, _ = sf.read(wav_path)
-            
-        elif mode == 'numpy':
-            audio_input = wav_path
+        audio_input = self.audio_features(mode, wav_path)
 
         inputs = self.processor(audio_input, sampling_rate=16_000, return_tensors="pt", padding=True)
 
@@ -59,6 +55,14 @@ class Wav2vecHF:
                 return text[0], word_offsets
 
         return text[0]
+
+    def audio_features(self, mode, wav_path):
+        if mode == 'file':
+            audio_input, _ = sf.read(wav_path)
+
+        elif mode == 'numpy':
+            audio_input = wav_path
+        return audio_input
 
     def transcribe_dir(self, audio_dir, hotwords = [], return_timestamps = False):
         wav_files = glob.glob(audio_dir + '/*.wav')
