@@ -24,21 +24,27 @@ class Wav2vecHF:
 
         return processor, model.to(self.device)
 
-    def transcribe(self, wav_path, hotwords = [], return_timestamps = False):                
-        
-        audio_input, sample_rate = sf.read(wav_path)
+    def transcribe(self, wav_path, hotwords=[], return_timestamps=False, mode='file'):
+
+        if mode == 'file':
+            audio_input, _ = sf.read(wav_path)
+            
+        elif mode == 'numpy':
+            audio_input = wav_path
 
         inputs = self.processor(audio_input, sampling_rate=16_000, return_tensors="pt", padding=True)
-        
+
         with torch.no_grad():
             logits = self.model(**inputs.to(self.device)).logits
-        
+
         if self.lm == 'viterbi':
             text = self.processor.batch_decode(torch.argmax(logits, dim=-1), skip_special_tokens=True)
+
         elif self.lm == 'kenlm':
-            result = self.processor.batch_decode(logits.cpu().numpy(), hotwords = hotwords, output_word_offsets=return_timestamps)
+            result = self.processor.batch_decode(logits.cpu().numpy(), hotwords=hotwords,
+                                                 output_word_offsets=return_timestamps)
             text = result.text
-            
+
             if return_timestamps:
                 time_offset = self.model.config.inputs_to_logits_ratio / self.processor.feature_extractor.sampling_rate
                 word_offsets = [
@@ -49,9 +55,9 @@ class Wav2vecHF:
                     }
                     for d in result.word_offsets[0]
                 ]
-                
+
                 return text[0], word_offsets
-            
+
         return text[0]
 
     def transcribe_dir(self, audio_dir, hotwords = [], return_timestamps = False):
@@ -62,9 +68,9 @@ class Wav2vecHF:
             with open(audio_dir + '/' + filename, mode='w+', encoding='utf-8') as ofile:
                 ofile.write(text)
 
+
 if __name__ == '__main__':
-    #print(Wav2vecHF('Harveenchadha/hindi_model_with_lm_vakyansh', 'kenlm').transcribe('/home/harveen/blindtest_442338.wav',  return_timestamps = True))
-    model_lm = Wav2vecHF('/home/anirudh/ekstep-speech-recognition/vakyansh-wav2vec2-experimentation/checkpoints/hf', 'kenlm')
-    #model_v = Wav2vecHF('/home/anirudh/ekstep-speech-recognition/vakyansh-wav2vec2-experimentation/checkpoints/hf', 'viterbi')
-    #print(model_1m.transcribe('/home/anirudh/test.wav', return_timestamps = True))
-    print(model_lm.transcribe('blindtest_442338.wav'))
+    model_lm = Wav2vecHF('wav2vec2_to_hf/hindi_hf', 'kenlm')
+    model_v = Wav2vecHF('wav2vec2_to_hf/hindi_hf', 'viterbi')
+    print(model_lm.transcribe('ahd_00026_long_00144_hin_0011.wav'))
+    print(model_v.transcribe('ahd_00026_long_00144_hin_0011.wav'))
