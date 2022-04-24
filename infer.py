@@ -25,6 +25,7 @@ class Wav2vecHF:
         return processor, model.to(self.device)
 
     def transcribe(self, wav_path, hotwords=[], return_timestamps=False, mode='file'):
+        print("Mode--------", mode)
 
         audio_input = self.audio_features(mode, wav_path)
 
@@ -64,7 +65,7 @@ class Wav2vecHF:
             audio_input = wav_path
         return audio_input
 
-    def transcribe_dir(self, audio_dir, hotwords = [], return_timestamps = False):
+    def transcribe_dir(self, audio_dir, hotwords=[], return_timestamps=False):
         wav_files = glob.glob(audio_dir + '/*.wav')
         for wav_file in tqdm(wav_files):
             text = self.transcribe(wav_file, hotwords, return_timestamps)

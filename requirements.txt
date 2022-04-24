@@ -1,5 +1,7 @@
 transformers==4.18.0
-torch==1.7.1
+torch~=1.10.2
 pyctcdecode==0.3.0
 gradio==2.9.4
 SoundFile
+tqdm~=4.62.3
+nnresample~=0.2.4.1
