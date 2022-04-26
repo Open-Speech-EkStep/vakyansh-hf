@@ -5,3 +5,5 @@ gradio==2.9.4
 SoundFile
 tqdm~=4.62.3
 nnresample~=0.2.4.1
+webrtcvad~=2.0.10
+denoiser==0.1.4

@@ -25,7 +25,6 @@ class Wav2vecHF:
         return processor, model.to(self.device)
 
     def transcribe(self, wav_path, hotwords=[], return_timestamps=False, mode='file'):
-        print("Mode--------", mode)
 
         audio_input = self.audio_features(mode, wav_path)
 
